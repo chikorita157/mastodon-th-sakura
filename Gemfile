@@ -148,6 +148,8 @@ group :development do
   gem 'capistrano-yarn', '~> 2.0'
 
   gem 'stackprof'
+
+  gem 'foreman'
 end
 
 group :production do
