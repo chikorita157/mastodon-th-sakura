@@ -13,7 +13,6 @@ ENV DEBIAN_FRONTEND="noninteractive" \
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR /opt/mastodon
-COPY Gemfile* package.json yarn.lock /opt/mastodon/
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
@@ -32,13 +31,31 @@ RUN apt-get update && \
         ca-certificates \
         libreadline8 \
         python3 \
-        shared-mime-info && \
+        shared-mime-info
+
+COPY --link .yarn/releases/ /opt/mastodon/.yarn/releases/
+COPY --link Gemfile* package.json yarn.lock .yarnrc.yml /opt/mastodon/
+
+RUN \
     bundle config set --local deployment 'true' && \
     bundle config set --local without 'development test' && \
     bundle config set silence_root_warning true && \
     bundle install -j"$(nproc)" && \
-    yarn install --pure-lockfile --network-timeout 600000 && \
+    yarn install --immutable && \
     yarn cache clean
+
+ENV RAILS_ENV="production" \
+    NODE_ENV="production"
+
+# Precompile assets
+# TODO(kouhai): we're currently patching node_modules because of emoji-mart.
+# we should integrate our own fork instead.
+COPY ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json
+ENV OTP_SECRET=precompile_placeholder \
+    SECRET_KEY_BASE=precompile_placeholder \
+    RAKE_NO_YARN_INSTALL_HACK=1
+RUN bundle exec rails assets:precompile
+
 
 FROM node:${NODE_VERSION}
 
@@ -79,8 +96,8 @@ RUN apt-get update && \
 # Note: no, cleaning here since Debian does this automatically
 # See the file /etc/apt/apt.conf.d/docker-clean within the Docker image's filesystem
 
-COPY --chown=mastodon:mastodon . /opt/mastodon
-COPY --chown=mastodon:mastodon --from=build /opt/mastodon /opt/mastodon
+COPY --link --chown=mastodon:mastodon . /opt/mastodon
+COPY --link --chown=mastodon:mastodon --from=build /opt/mastodon /opt/mastodon
 
 ENV RAILS_ENV="production" \
     NODE_ENV="production" \
@@ -90,13 +107,6 @@ ENV RAILS_ENV="production" \
 # Set the run user
 USER mastodon
 WORKDIR /opt/mastodon
-
-# Precompile assets
-# TODO(kaniini): Yarn install is invoked to allow us to pre-patch emoji-mart
-# we should set up a deviation instead.
-RUN yarn install && cp ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json && \
-	OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder rails assets:precompile && \
-	yarn cache clean
 
 # Set the work dir and the container entry point
 ENTRYPOINT ["/usr/bin/tini", "--"]
