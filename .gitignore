@@ -69,3 +69,12 @@ yarn-debug.log
 
 # Ignore Docker option files
 docker-compose.override.yml
+
+# Yarn Berry
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
