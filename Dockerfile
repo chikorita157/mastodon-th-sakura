@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 # This needs to be bullseye-slim because the Ruby image is built on bullseye-slim
-ARG NODE_VERSION="16.19-bullseye-slim"
+ARG NODE_VERSION="18.15-bullseye-slim"
 
 FROM ghcr.io/moritzheiber/ruby-jemalloc:3.2.1-slim as ruby
 FROM node:${NODE_VERSION} as build
@@ -8,7 +8,8 @@ FROM node:${NODE_VERSION} as build
 COPY --link --from=ruby /opt/ruby /opt/ruby
 
 ENV DEBIAN_FRONTEND="noninteractive" \
-    PATH="${PATH}:/opt/ruby/bin"
+    PATH="${PATH}:/opt/ruby/bin" \
+    NODE_OPTIONS=--openssl-legacy-provider
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -50,15 +51,17 @@ ENV RAILS_ENV="production" \
 # Precompile assets
 # TODO(kouhai): we're currently patching node_modules because of emoji-mart.
 # we should integrate our own fork instead.
-COPY ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json
+COPY --link . /opt/mastodon
 ENV OTP_SECRET=precompile_placeholder \
     SECRET_KEY_BASE=precompile_placeholder \
     RAKE_NO_YARN_INSTALL_HACK=1
-RUN bundle exec rails assets:precompile
+RUN mv ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json && \
+    bundle exec rails assets:precompile
 
 
 FROM node:${NODE_VERSION}
 
+ARG SOURCE_TAG=''
 ARG UID="991"
 ARG GID="991"
 
@@ -96,13 +99,13 @@ RUN apt-get update && \
 # Note: no, cleaning here since Debian does this automatically
 # See the file /etc/apt/apt.conf.d/docker-clean within the Docker image's filesystem
 
-COPY --link --chown=mastodon:mastodon . /opt/mastodon
 COPY --link --chown=mastodon:mastodon --from=build /opt/mastodon /opt/mastodon
 
 ENV RAILS_ENV="production" \
     NODE_ENV="production" \
     RAILS_SERVE_STATIC_FILES="true" \
-    BIND="0.0.0.0"
+    BIND="0.0.0.0" \
+    SOURCE_TAG="${SOURCE_TAG}"
 
 # Set the run user
 USER mastodon

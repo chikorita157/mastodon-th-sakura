@@ -21,7 +21,7 @@ module Mastodon
     end
 
     def suffix
-      '+glitch+th'
+      '+glitch.th'
     end
 
     def to_a
@@ -42,15 +42,18 @@ module Mastodon
 
     # specify git tag or commit hash here
     def source_tag
-      ENV.fetch('SOURCE_TAG', nil)
+      tag = ENV.fetch('SOURCE_TAG', nil)
+      return if tag.nil? || tag.empty?
+      tag
     end
 
     def source_url
-      if source_tag && source_base_url =~ /gitea/
-        suffix = if !str[/\H/]
-                   "commit/#{source_tag}"
+      tag = source_tag
+      if tag && source_base_url =~ /gitea/
+        suffix = if !tag[/\H/]
+                   "commit/#{tag}"
                  else
-                   "branch/#{source_tag}"
+                   "branch/#{tag}"
                  end
         "#{source_base_url}/#{suffix}"
       else
