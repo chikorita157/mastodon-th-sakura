@@ -2,16 +2,17 @@ version: '3'
 services:
   db:
     restart: always
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     shm_size: 256mb
     networks:
       - internal_network
     healthcheck:
       test: ['CMD', 'pg_isready', '-U', 'postgres']
     volumes:
-      - ./postgres14:/var/lib/postgresql/data
+      - ./data/postgres.15:/var/lib/postgresql/data
     environment:
       - 'POSTGRES_HOST_AUTH_METHOD=trust'
+      - 'POSTGRES_USER=mastodon'
 
   redis:
     restart: always
@@ -21,7 +22,7 @@ services:
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
     volumes:
-      - ./redis:/data
+      - ./data/redis:/data
 
   # es:
   #   restart: always
@@ -56,7 +57,7 @@ services:
 
   web:
     build: .
-    image: tootsuite/mastodon
+    image: gitea.treehouse.systems/treehouse/mastodon:latest
     restart: always
     env_file: .env.production
     command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"
@@ -68,6 +69,8 @@ services:
       test: ['CMD-SHELL', 'wget -q --spider --proxy=off localhost:3000/health || exit 1']
     expose:
       - 3000
+    ports:
+      - 3000:3000
     labels:
       - traefik.enable=true
       - traefik.http.routers.web.rule=Host(`social-dev.treehouse.systems`)
@@ -82,10 +85,11 @@ services:
       # - es
     volumes:
       - ./public/system:/mastodon/public/system
+      # - ./data/postgres:/var/lib/postgresql/data
 
   streaming:
     build: .
-    image: tootsuite/mastodon
+    image: gitea.treehouse.systems/treehouse/mastodon:latest
     restart: always
     env_file: .env.production
     command: node ./streaming
@@ -111,7 +115,7 @@ services:
 
   sidekiq:
     build: .
-    image: tootsuite/mastodon
+    image: gitea.treehouse.systems/treehouse/mastodon:latest
     restart: always
     env_file: .env.production
     command: bundle exec sidekiq
