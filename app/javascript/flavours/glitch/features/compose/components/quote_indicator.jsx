@@ -20,7 +20,6 @@ const messages = defineMessages({
 });
 
 
-export default @injectIntl
 class QuoteIndicator extends ImmutablePureComponent {
 
   static propTypes = {
@@ -84,3 +83,5 @@ class QuoteIndicator extends ImmutablePureComponent {
   }
 
 }
+
+export default injectIntl(QuoteIndicator)
