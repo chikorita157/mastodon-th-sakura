@@ -3,7 +3,7 @@
 ARG NODE_VERSION="18.15-bullseye-slim"
 
 FROM ghcr.io/moritzheiber/ruby-jemalloc:3.2.1-slim as ruby
-FROM node:${NODE_VERSION} as build
+FROM node:${NODE_VERSION} as build-base
 
 COPY --link --from=ruby /opt/ruby /opt/ruby
 
@@ -45,13 +45,16 @@ RUN \
     yarn install --immutable && \
     yarn cache clean
 
-ENV RAILS_ENV="production" \
-    NODE_ENV="production"
-
 # Precompile assets
 # TODO(kouhai): we're currently patching node_modules because of emoji-mart.
 # we should integrate our own fork instead.
 COPY --link . /opt/mastodon
+
+FROM build-base AS build
+
+ENV RAILS_ENV="production" \
+    NODE_ENV="production"
+
 ENV OTP_SECRET=precompile_placeholder \
     SECRET_KEY_BASE=precompile_placeholder \
     RAKE_NO_YARN_INSTALL_HACK=1
