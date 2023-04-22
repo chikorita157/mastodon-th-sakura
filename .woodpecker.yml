@@ -5,6 +5,14 @@ variables:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       NAME: gitea.treehouse.systems/treehouse/mastodon
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      partial: false
+      depth: 10
+
 pipeline:
   build:
     <<: *docker-step
