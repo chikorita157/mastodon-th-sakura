@@ -37,7 +37,8 @@ module Mastodon
     end
 
     def source_base_url
-      ENV.fetch('SOURCE_BASE_URL', "https://gitea.treehouse.systems/#{repository}")
+      base = ENV['GITHUB_REPOSITORY'] ? 'https://github.com' : 'https://gitea.treehouse.systems'
+      ENV.fetch('SOURCE_BASE_URL', "#{base}/#{repository}")
     end
 
     # specify git tag or commit hash here
