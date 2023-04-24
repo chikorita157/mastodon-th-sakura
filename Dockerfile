@@ -64,7 +64,6 @@ RUN mv ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json && \
 
 FROM node:${NODE_VERSION}
 
-ARG SOURCE_TAG=''
 ARG UID="991"
 ARG GID="991"
 
@@ -104,6 +103,7 @@ RUN apt-get update && \
 
 COPY --link --chown=mastodon:mastodon --from=build /opt/mastodon /opt/mastodon
 
+ARG SOURCE_TAG=''
 ENV RAILS_ENV="production" \
     NODE_ENV="production" \
     RAILS_SERVE_STATIC_FILES="true" \

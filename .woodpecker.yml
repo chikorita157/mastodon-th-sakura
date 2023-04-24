@@ -1,11 +1,13 @@
 variables:
+  environment: &docker-environment
+    NAME: gitea.treehouse.systems/treehouse/mastodon
+    DATE_COMMAND: export COMMIT_DATE=$(date -u -Idate -d @$(git show -s --format=%ct))
   docker-step: &docker-step
     image: docker:rc-git
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      NAME: gitea.treehouse.systems/treehouse/mastodon
-      DATE_COMMAND: export COMMIT_DATE=$(date -u -Idate -d @$(git show -s --format=%ct))
+      <<: *docker-environment
 
 clone:
   git:
@@ -53,10 +55,12 @@ pipeline:
     <<: *docker-step
     commands:
       - echo $REGISTRY_SECRET | docker login -u $REGISTRY_USER --password-stdin gitea.treehouse.systems
+      - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME:%
       - cat tags.txt | xargs -n 1 -I% docker image push $NAME:%
     when:
       event: [push, tag]
       branch: main
     secrets: [REGISTRY_SECRET]
     environment:
+      <<: *docker-environment
       REGISTRY_USER: ariadne
