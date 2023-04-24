@@ -5,6 +5,7 @@ variables:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       NAME: gitea.treehouse.systems/treehouse/mastodon
+      DATE_COMMAND: export COMMIT_DATE=$(date -u -Idate -d @$(git show -s --format=%ct))
 
 clone:
   git:
@@ -29,13 +30,23 @@ pipeline:
   build:
     <<: *docker-step
     commands:
+      - eval $DATE_COMMAND
+      - export TAG=$${COMMIT_DATE}.$CI_COMMIT_SHA && echo $${TAG}
       - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $NAME:latest
-      - docker tag $NAME:latest $NAME:$CI_COMMIT_SHA
+      - docker tag $NAME:latest $NAME:$TAG
+      # idk what's actually persisted between steps
+      # /shrug this works, so,???
+      - echo $${TAG} > tags.txt
+      - echo latest >> tags.txt
 
   tag-nightly:
     <<: *docker-step
     commands:
-      - docker tag $NAME:latest $NAME:$(date -Idate -u)
+      - eval $DATE_COMMAND
+      - echo "$${COMMIT_DATE}"
+      - docker tag $NAME:latest $NAME:$COMMIT_DATE
+      - echo $COMMIT_DATE >> tags.txt
+      - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME:%
 
   # maybe we can use tags someday,,,
   # tag-tag:
@@ -50,9 +61,11 @@ pipeline:
   push:
     <<: *docker-step
     commands:
-      - echo $REGISTRY_SECRET | docker login -u ariadne --password-stdin gitea.treehouse.systems
-      - docker image push --all-tags $NAME
+      - echo $REGISTRY_SECRET | docker login -u $REGISTRY_USER --password-stdin gitea.treehouse.systems
+      - cat tags.txt | xargs -n 1 -I% docker image push $NAME:%
     when:
       event: [push, tag]
       branch: main
     secrets: [REGISTRY_SECRET]
+    environment:
+      REGISTRY_USER: ariadne
