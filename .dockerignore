@@ -17,6 +17,7 @@
 .gitattributes
 .github
 .gitignore
+.woodpecker.yml
 build
 chart
 coverage
