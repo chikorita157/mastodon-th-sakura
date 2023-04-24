@@ -39,15 +39,6 @@ pipeline:
       - echo $${TAG} > tags.txt
       - echo latest >> tags.txt
 
-  tag-nightly:
-    <<: *docker-step
-    commands:
-      - eval $DATE_COMMAND
-      - echo "$${COMMIT_DATE}"
-      - docker tag $NAME:latest $NAME:$COMMIT_DATE
-      - echo $COMMIT_DATE >> tags.txt
-      - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME:%
-
   # maybe we can use tags someday,,,
   # tag-tag:
   #   image: *docker-git
