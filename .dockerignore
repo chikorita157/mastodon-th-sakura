@@ -19,6 +19,7 @@
 .github
 .gitignore
 .woodpecker.yml
+/*.md
 build
 chart
 coverage
