@@ -42,7 +42,7 @@ RUN \
     bundle config set --local without 'development test' && \
     bundle config set silence_root_warning true && \
     bundle install -j"$(nproc)" && \
-    yarn install --immutable && \
+    yarn install && \
     yarn cache clean
 
 # Precompile assets
@@ -58,11 +58,15 @@ ENV RAILS_ENV="production" \
 ENV OTP_SECRET=precompile_placeholder \
     SECRET_KEY_BASE=precompile_placeholder \
     RAKE_NO_YARN_INSTALL_HACK=1
-RUN mv ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json && \
+RUN mv ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json && yarn install && \
     bundle exec rails assets:precompile
 
 
 FROM node:${NODE_VERSION}
+
+# Use those args to specify your own version flags & suffixes
+ARG MASTODON_VERSION_FLAGS=""
+ARG MASTODON_VERSION_SUFFIX=""
 
 ARG UID="991"
 ARG GID="991"
@@ -108,7 +112,9 @@ ENV RAILS_ENV="production" \
     NODE_ENV="production" \
     RAILS_SERVE_STATIC_FILES="true" \
     BIND="0.0.0.0" \
-    SOURCE_TAG="${SOURCE_TAG}"
+    SOURCE_TAG="${SOURCE_TAG}" \
+    MASTODON_VERSION_FLAGS="${MASTODON_VERSION_FLAGS}" \
+    MASTODON_VERSION_SUFFIX="${MASTODON_VERSION_SUFFIX}"
 
 # Set the run user
 USER mastodon
