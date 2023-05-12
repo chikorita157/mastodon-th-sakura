@@ -1,4 +1,5 @@
 import React from 'react';
+import CharacterCounter from './character_counter';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import PropTypes from 'prop-types';
 import ReplyIndicatorContainer from '../containers/reply_indicator_container';
@@ -12,13 +13,12 @@ import UploadFormContainer from '../containers/upload_form_container';
 import WarningContainer from '../containers/warning_container';
 import { isMobile } from 'flavours/glitch/is_mobile';
 import ImmutablePureComponent from 'react-immutable-pure-component';
+import { length } from 'stringz';
 import { countableText } from '../util/counter';
+import { maxChars } from 'flavours/glitch/initial_state';
 import OptionsContainer from '../containers/options_container';
 import Publisher from './publisher';
 import TextareaIcons from './textarea_icons';
-import { maxChars } from 'flavours/glitch/initial_state';
-import CharacterCounter from './character_counter';
-import { length } from 'stringz';
 
 const messages = defineMessages({
   placeholder: { id: 'compose_form.placeholder', defaultMessage: 'What is on your mind?' },
@@ -77,7 +77,6 @@ class ComposeForm extends ImmutablePureComponent {
     preselectOnReply: PropTypes.bool,
     onChangeSpoilerness: PropTypes.func,
     onChangeVisibility: PropTypes.func,
-    onPaste: PropTypes.func,
     onMediaDescriptionConfirm: PropTypes.func,
   };
 
@@ -165,11 +164,11 @@ class ComposeForm extends ImmutablePureComponent {
   };
 
   //  Selects a suggestion from the autofill.
-  onSuggestionSelected = (tokenStart, token, value) => {
+  handleSuggestionSelected = (tokenStart, token, value) => {
     this.props.onSuggestionSelected(tokenStart, token, value, ['text']);
   };
 
-  onSpoilerSuggestionSelected = (tokenStart, token, value) => {
+  handleSpoilerSuggestionSelected = (tokenStart, token, value) => {
     this.props.onSuggestionSelected(tokenStart, token, value, ['spoiler_text']);
   };
 
@@ -178,7 +177,7 @@ class ComposeForm extends ImmutablePureComponent {
       this.handleSubmit();
     }
 
-    if (e.keyCode == 13 && e.altKey) {
+    if (e.keyCode === 13 && e.altKey) {
       this.handleSecondarySubmit();
     }
   };
@@ -282,9 +281,7 @@ class ComposeForm extends ImmutablePureComponent {
     const {
       handleEmojiPick,
       handleSecondarySubmit,
-      handleSelect,
       handleSubmit,
-      handleRefTextarea,
     } = this;
     const {
       advancedOptions,
@@ -292,7 +289,6 @@ class ComposeForm extends ImmutablePureComponent {
       isSubmitting,
       layout,
       onChangeSpoilerness,
-      onChangeVisibility,
       onClearSuggestions,
       onFetchSuggestions,
       onPaste,
@@ -324,10 +320,10 @@ class ComposeForm extends ImmutablePureComponent {
             onKeyDown={this.handleKeyDown}
             disabled={!spoiler}
             ref={this.handleRefSpoilerText}
-            suggestions={this.props.suggestions}
+            suggestions={suggestions}
             onSuggestionsFetchRequested={onFetchSuggestions}
             onSuggestionsClearRequested={onClearSuggestions}
-            onSuggestionSelected={this.onSpoilerSuggestionSelected}
+            onSuggestionSelected={this.handleSpoilerSuggestionSelected}
             searchTokens={[':']}
             id='glitch.composer.spoiler.input'
             className='spoiler-input__input'
@@ -344,11 +340,11 @@ class ComposeForm extends ImmutablePureComponent {
           value={this.props.text}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown}
-          suggestions={this.props.suggestions}
+          suggestions={suggestions}
           onFocus={this.handleFocus}
           onSuggestionsFetchRequested={onFetchSuggestions}
           onSuggestionsClearRequested={onClearSuggestions}
-          onSuggestionSelected={this.onSuggestionSelected}
+          onSuggestionSelected={this.handleSuggestionSelected}
           onPaste={onPaste}
           autoFocus={!showSearch && !isMobile(window.innerWidth, layout)}
           lang={this.props.lang}
