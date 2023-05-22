@@ -13,10 +13,20 @@ const fs = require('fs');
 const WebSocket = require('ws');
 const { JSDOM } = require('jsdom');
 
-const environment = process.env.NODE_ENV || 'development';
+const environment = process.env.NODE_ENV !== 'development' ? 'production' : 'development';
 
+// Replicate dotenv-rails's behavior
 dotenv.config({
-  path: environment === 'production' ? '.env.production' : '.env',
+  path: '.env',
+});
+dotenv.config({
+  path: environment === 'production' ? '.env.production' : '.env.development',
+});
+dotenv.config({
+  path: '.env.local',
+});
+dotenv.config({
+  path: environment === 'production' ? '.env.production.local' : '.env.development.local',
 });
 
 log.level = process.env.LOG_LEVEL || 'verbose';
