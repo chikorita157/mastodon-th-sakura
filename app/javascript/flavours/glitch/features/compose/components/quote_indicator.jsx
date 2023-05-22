@@ -7,8 +7,8 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 //  Components.
 import AccountContainer from 'flavours/glitch/containers/account_container';
-import Icon from 'flavours/glitch/components/icon';
-import IconButton from 'flavours/glitch/components/icon_button';
+import { Icon } from 'flavours/glitch/components/icon';
+import { IconButton } from 'flavours/glitch/components/icon_button';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
 
 //  Messages.
