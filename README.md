@@ -18,3 +18,4 @@ or upstreaming our patches.
 - Treehouse Social: [social.treehouse.systems](https://social.treehouse.systems)
 - VT Social: [vt.social](https://vt.social)
 - Unstable Systems: [unstable.systems](https://unstable.systems)
+- Slowest (dot) Network: [slowest.network](https://slowest.network)
