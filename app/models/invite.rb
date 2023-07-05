@@ -21,8 +21,8 @@ class Invite < ApplicationRecord
 
   # FIXME: make this a rails cfg key or whatev?
   TH_USE_INVITE_QUOTA = !!ENV['TH_USE_INVITE_QUOTA']
-  TH_INVITE_MAX_USES = ENV.fetch('TH_INVITE_MAX_USES', 25)
-  TH_ACTIVE_INVITE_SLOT_QUOTA = ENV.fetch('TH_ACTIVE_INVITE_SLOT_QUOTA', 40)
+  TH_INVITE_MAX_USES = ENV.fetch('TH_INVITE_MAX_USES', 25).to_i
+  TH_ACTIVE_INVITE_SLOT_QUOTA = ENV.fetch('TH_ACTIVE_INVITE_SLOT_QUOTA', 40).to_i
 
   belongs_to :user, inverse_of: :invites
   has_many :users, inverse_of: :invite
