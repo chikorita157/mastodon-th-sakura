@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1.4
 # This needs to be bullseye-slim because the Ruby image is built on bullseye-slim
-ARG NODE_VERSION="18.16-bullseye-slim"
+ARG NODE_IMAGE=node:18.16-bullseye-slim
+ARG RUBY_IMAGE=ghcr.io/moritzheiber/ruby-jemalloc:3.2.2-slim
 
-FROM ghcr.io/moritzheiber/ruby-jemalloc:3.2.1-slim as ruby
-FROM node:${NODE_VERSION} as build-base
+FROM ${RUBY_IMAGE} as ruby
+FROM ${NODE_IMAGE} as build-base
 
 COPY --link --from=ruby /opt/ruby /opt/ruby
 
@@ -62,7 +63,7 @@ RUN mv ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json && yarn ins
     bundle exec rails assets:precompile
 
 
-FROM node:${NODE_VERSION}
+FROM ${NODE_IMAGE}
 
 # Use those args to specify your own version flags & suffixes
 ARG MASTODON_VERSION_FLAGS=""
