@@ -264,7 +264,7 @@ html {
 
 // Change the background colors of statuses
 .focusable:focus {
-  background: $ui-base-color;
+  background: lighten($white, 4%);
 }
 
 .detailed-status,
@@ -653,11 +653,6 @@ html {
 .reply-indicator {
   background: transparent;
   border: 1px solid lighten($ui-base-color, 8%);
-}
-
-.dismissable-banner {
-  border-left: 1px solid lighten($ui-base-color, 8%);
-  border-right: 1px solid lighten($ui-base-color, 8%);
 }
 
 .status__content,
