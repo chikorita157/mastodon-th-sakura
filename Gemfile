@@ -177,6 +177,9 @@ group :development do
   # Profiling tools
   gem 'memory_profiler', require: false
   gem 'stackprof', require: false
+
+  # foreman
+  gem 'foreman'
 end
 
 group :production do
