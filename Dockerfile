@@ -76,7 +76,8 @@ ENV OTP_SECRET=precompile_placeholder \
     SECRET_KEY_BASE=precompile_placeholder \
     RAKE_NO_YARN_INSTALL_HACK=1
 
-ENV BOOTSNAP_CACHE_DIR=/opt/mastodon/bootsnap
+# override this at will
+ENV BOOTSNAP_READONLY=1
 
 RUN --mount=type=cache,id=yarn,target=/opt/yarn/cache,sharing=private \
     --mount=type=cache,id=webpacker,target=/opt/webpacker/cache,sharing=private \
@@ -145,8 +146,6 @@ ENV RAILS_ENV="production" \
     SOURCE_TAG="${SOURCE_TAG}" \
     MASTODON_VERSION_FLAGS="${MASTODON_VERSION_FLAGS}" \
     MASTODON_VERSION_SUFFIX="${MASTODON_VERSION_SUFFIX}"
-
-ENV BOOTSNAP_CACHE_DIR=/opt/mastodon/bootsnap
 
 # override this at will
 ENV BOOTSNAP_READONLY=1
