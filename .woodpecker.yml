@@ -14,26 +14,26 @@ clone:
     image: woodpeckerci/plugin-git
     settings:
       partial: false
-      depth: 5
+      depth: 10
 
 pipeline:
-  build-base:
-    <<: *docker-step
-    commands:
-      - docker version
-      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build-base -t $NAME:build-base
+  # build-base:
+  #   <<: *docker-step
+  #   commands:
+  #     - docker version
+  #     - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build-base -t $NAME:build-base
 
-  build:
-    <<: *docker-step
-    commands:
-      - docker version
-      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build -t $NAME:build
+  # build:
+  #   <<: *docker-step
+  #   commands:
+  #     - docker version
+  #     - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build -t $NAME:build
 
-  output-base:
-    <<: *docker-step
-    commands:
-      - docker version
-      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target output-base -t $NAME:build
+  # output-base:
+  #   <<: *docker-step
+  #   commands:
+  #     - docker version
+  #     - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target output-base -t $NAME:build
 
   # the world is not yet ready for this step
   # test:
