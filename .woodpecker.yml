@@ -23,13 +23,25 @@ pipeline:
       - docker version
       - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build-base -t $NAME:build-base
 
+  build:
+    <<: *docker-step
+    commands:
+      - docker version
+      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build -t $NAME:build
+
+  output-base:
+    <<: *docker-step
+    commands:
+      - docker version
+      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target output-base -t $NAME:build
+
   # the world is not yet ready for this step
   # test:
   #   <<: *docker-step
   #   commands:
   #     - docker run --rm -e RAILS_ENV=test -e NODE_ENV=development $NAME:build-base sh -c 'bundle config set --local without development && bundle install && rake spec'
 
-  build:
+  output:
     <<: *docker-step
     commands:
       - eval $DATE_COMMAND

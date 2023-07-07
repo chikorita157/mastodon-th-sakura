@@ -70,7 +70,8 @@ services:
     expose:
       - 3000
     ports:
-      - 3000:3000
+      - 127.0.0.1:3000:3000
+      - '[::1]:3000:3000'
     labels:
       - traefik.enable=true
       - traefik.http.routers.web.rule=Host(`social-dev.treehouse.systems`)

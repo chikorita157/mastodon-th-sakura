@@ -3,9 +3,11 @@
 ARG NODE_IMAGE=node:18.16-bullseye-slim
 ARG RUBY_IMAGE=ghcr.io/moritzheiber/ruby-jemalloc:3.2.2-slim
 
+# hadolint ignore=DL3006
 FROM ${RUBY_IMAGE} as ruby
 
 # build-base
+# hadolint ignore=DL3006
 FROM ${NODE_IMAGE} as build-base
 
 COPY --link --from=ruby /opt/ruby /opt/ruby
@@ -17,7 +19,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 WORKDIR /opt/mastodon
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008,DL3009
 RUN --mount=type=cache,id=apt,target=/var/cache/apt,sharing=private \
     set -eux && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -47,6 +49,7 @@ ENV NODE_OPTIONS=--openssl-legacy-provider \
     YARN_GLOBAL_FOLDER=/opt/yarn \
     YARN_ENABLE_GLOBAL_CACHE=1
 
+# hadolint ignore=DL3060
 RUN --mount=type=cache,id=bundle,target=/opt/bundle/cache,sharing=private \
     --mount=type=cache,id=yarn,target=/opt/yarn/cache,sharing=private \
     set -eux && \
@@ -89,20 +92,10 @@ RUN --mount=type=cache,id=yarn,target=/opt/yarn/cache,sharing=private \
     bundle exec rails assets:precompile
 
 # final image
-FROM ${NODE_IMAGE} as output
+# hadolint ignore=DL3006
+FROM ${NODE_IMAGE} as output-base
 
-# Use those args to specify your own version flags & suffixes
-ARG SOURCE_TAG=""
-ARG MASTODON_VERSION_FLAGS=""
-ARG MASTODON_VERSION_SUFFIX=""
-
-ARG UID="991"
-ARG GID="991"
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-ENV DEBIAN_FRONTEND="noninteractive" \
-    PATH="${PATH}:/opt/ruby/bin:/opt/mastodon/bin"
+ENV DEBIAN_FRONTEND="noninteractive"
 
 # Ignoring these here since we don't want to pin any versions and the Debian image removes apt-get content after use
 # hadolint ignore=DL3008,DL3009
@@ -110,10 +103,8 @@ RUN --mount=type=cache,id=apt,target=/var/cache/apt,sharing=private \
     set -eux && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache && \
-    apt-get update && \
     echo "Etc/UTC" > /etc/localtime && \
-    groupadd -g "${GID}" mastodon && \
-    useradd -l -u "$UID" -g "${GID}" -m -d /opt/mastodon mastodon && \
+    apt-get update && \
     apt-get -y --no-install-recommends install \
         ca-certificates \
         ffmpeg \
@@ -130,8 +121,28 @@ RUN --mount=type=cache,id=apt,target=/var/cache/apt,sharing=private \
         tini \
         tzdata \
         wget \
-        whois \
-    && ln -s /opt/mastodon /mastodon
+        whois
+
+# final image
+FROM output-base as output
+
+# Use those args to specify your own version flags & suffixes
+ARG SOURCE_TAG=""
+ARG MASTODON_VERSION_FLAGS=""
+ARG MASTODON_VERSION_SUFFIX=""
+
+ARG UID="991"
+ARG GID="991"
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ENV PATH="${PATH}:/opt/ruby/bin:/opt/mastodon/bin"
+
+# Ignoring these here since we don't want to pin any versions and the Debian image removes apt-get content after use
+# hadolint ignore=DL3008,DL3009
+RUN groupadd -g "${GID}" mastodon && \
+    useradd -l -u "$UID" -g "${GID}" -m -d /opt/mastodon mastodon && \
+    ln -s /opt/mastodon /mastodon
 
 # Note: no, cleaning here since Debian does this automatically
 # See the file /etc/apt/apt.conf.d/docker-clean within the Docker image's filesystem
