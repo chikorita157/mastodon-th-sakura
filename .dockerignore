@@ -22,7 +22,6 @@ build
 chart
 coverage
 data
-db
 elasticsearch
 log
 neo4j
