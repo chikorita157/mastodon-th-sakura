@@ -42,7 +42,9 @@ const createRedisClient = async (config) => {
 
   // so apparently ioredis doesn't handle relative paths
   let client;
-  if (parsed.host === null && parsed.path[0] === '.') {
+  if (!redisUrl) {
+    client = new Redis(redisParams);
+  } else if (parsed.host === null && parsed.path[0] === '.') {
     redisParams.path = parsed.path;
     client = new Redis(redisParams);
   } else if (parsed.host === '.' || parsed.protocol === 'unix:' && parsed.host !== '') {
