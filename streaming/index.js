@@ -94,6 +94,12 @@ const parseJSON = (json, req) => {
  * @returns {Object.<string, any>} the configuration for the PostgreSQL connection
  */
 const pgConfigFromEnv = (env) => {
+  if (env.DB_HOST) {
+    env.DB_HOST = env.DB_HOST.replaceAll(/\$\w+|\$\{\w+\}/g, (match) => {
+      const name = match.startsWith('${') ? match.slice(2, -1) : match.slice(1);
+      return env[name];
+    });
+  }
   const pgConfigs = {
     development: {
       user:     env.DB_USER || pg.defaults.user,
