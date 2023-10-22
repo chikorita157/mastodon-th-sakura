@@ -2312,7 +2312,7 @@ __metadata:
     "@types/react-dom": ^18.2.4
     "@types/react-helmet": ^6.1.6
     "@types/react-immutable-proptypes": ^2.1.0
-    "@types/react-motion": ^0.0.34
+    "@types/react-motion": ^0.0.35
     "@types/react-overlays": ^3.1.0
     "@types/react-router-dom": ^5.3.3
     "@types/react-select": ^5.0.1
@@ -3346,12 +3346,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-motion@npm:^0.0.34":
-  version: 0.0.34
-  resolution: "@types/react-motion@npm:0.0.34"
+"@types/react-motion@npm:^0.0.35":
+  version: 0.0.35
+  resolution: "@types/react-motion@npm:0.0.35"
   dependencies:
     "@types/react": "*"
-  checksum: e4b19c8264511b7733abe2cbbe8ef5c58599138482810e93b7ad3fa522bd901015a5c750de5465b0ba59491e35313753b0edd4cc1f805f726786a4346a202d43
+  checksum: 890a0a37fc98a3e5ae9f0b2e04e9594689f1388712ada8d82774699265bf446c889889bbd1f776d649d33f4a0c70fad95e63fe77245b7318ac9cf27e44389dcf
   languageName: node
   linkType: hard
 
