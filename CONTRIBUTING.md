@@ -6,6 +6,24 @@ Here are some guidelines, and ways you can help.
 > (This document is a bit of a work-in-progress, so please bear with us.
 > If you don't see what you're looking for here, please don't hesitate to reach out!)
 
+## Merging
+
+If your username is kouhai, or you're otherwise merging from upstream glitch-soc
+for some reason, the following snippets may be useful:
+
+```sh
+git fetch glitch && git merge glitch/main && git checkout glitch/main -- yarn.lock
+```
+
+```sh
+export RAILS_ENV=production NODE_ENV=production
+export OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder
+bundle install \
+&& yarn install \
+&& bundle exec rake assets:clobber \
+&& bundle exec rake webpacker:compile | tee /tmp/out.log
+```
+
 ## Translations
 
 You can submit glitch-soc-specific translations via [Crowdin](https://crowdin.com/project/glitch-soc). They are periodically merged into the codebase.
