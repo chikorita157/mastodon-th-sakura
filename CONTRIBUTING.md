@@ -1,10 +1,10 @@
-#  Contributing to Mastodon Glitch+Treehouse Edition  #
+# Contributing to Mastodon Glitch+Treehouse Edition
 
 Thank you for your interest in contributing to the **Treehouse Mastodon** project!
 Here are some guidelines, and ways you can help.
 
->   (This document is a bit of a work-in-progress, so please bear with us.
->   If you don't see what you're looking for here, please don't hesitate to reach out!)
+> (This document is a bit of a work-in-progress, so please bear with us.
+> If you don't see what you're looking for here, please don't hesitate to reach out!)
 
 ## Translations
 
@@ -12,31 +12,31 @@ You can submit glitch-soc-specific translations via [Crowdin](https://crowdin.co
 
 [![Crowdin](https://badges.crowdin.net/glitch-soc/localized.svg)](https://crowdin.com/project/glitch-soc)
 
-##  Planning  ##
+## Planning
 
 Right now a lot of the planning for this project takes place in the `#fediverse`
 channel of the Treehouse Discord, or through Gitea Issues.
 
 We're working on ways to improve the planning structure and better solicit feedback, and if you feel like you can help in this respect, feel free to give us a holler.
 
-##  Documentation  ##
+## Documentation
 
 The upstream Glitch documentation for this repository is available at [`glitch-soc/docs`](https://github.com/glitch-soc/docs) (online at [glitch-soc.github.io/docs/](https://glitch-soc.github.io/docs/)).
 
-##  Setup  ##
+## Setup
 
 For a some-batteries-required guide to setting up a development environment for this repository, read Rin's excellent
 [SETUP.md](https://gitea.treehouse.systems/treehouse/mastodon/src/branch/main/SETUP.md).
 
-##  Frontend Development  ##
+## Frontend Development
 
 Check out [the documentation here](https://glitch-soc.github.io/docs/contributing/frontend/) for more information.
 
-##  Backend Development  ##
+## Backend Development
 
 See the guidelines below.
 
- - - -
+---
 
 You should also try to follow the guidelines set out in the original `CONTRIBUTING.md` from `mastodon/mastodon`, reproduced below.
 
@@ -84,8 +84,6 @@ It is not always possible to phrase every change in such a manner, but it is des
 - Unit and integration tests (rspec, jest)
 - Code style rules (rubocop, eslint)
 - Normalization of locale files (i18n-tasks)
-
-**Note**: You may need to log in and authorise the GitHub account your fork of this repository belongs to with CircleCI to enable some of the automated checks to run.
 
 ## Documentation
 

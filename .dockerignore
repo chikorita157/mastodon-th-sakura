@@ -26,8 +26,7 @@ elasticsearch
 log
 neo4j
 node_modules
-postgres
-postgres14
+postgres*
 public/assets
 public/packs
 public/packs-test

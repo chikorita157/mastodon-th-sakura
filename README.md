@@ -6,7 +6,8 @@ So here's the deal: we all work on this code, and anyone who uses that does so a
 
 Specifically, this fork-of-a-fork is intended for Treehouse use only. Unless
 otherwise communicated, we will not put effort into supporting other deployments
-or upstreaming our patches.
+or upstreaming our patches. This repo might be messy. Cleanliness of Git history
+is not guaranteed -- watch out for falling rebases regardless of A-button count!
 
 ## Links
 

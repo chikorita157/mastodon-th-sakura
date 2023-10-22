@@ -525,7 +525,6 @@ export default function compose(state = initialState, action) {
         return item;
       }));
   case INIT_MEDIA_EDIT_MODAL:
-  {
     const media =  state.get('media_attachments').find(item => item.get('id') === action.id);
     return state.set('media_modal', ImmutableMap({
       id: action.id,
@@ -534,7 +533,6 @@ export default function compose(state = initialState, action) {
       focusY: media.getIn(['meta', 'focus', 'y'], 0),
       dirty: false,
     }));
-  }
   case COMPOSE_CHANGE_MEDIA_DESCRIPTION:
     return state.setIn(['media_modal', 'description'], action.description).setIn(['media_modal', 'dirty'], true);
   case COMPOSE_CHANGE_MEDIA_FOCUS:
@@ -590,7 +588,6 @@ export default function compose(state = initialState, action) {
   case COMPOSE_DOODLE_SET:
     return state.mergeIn(['doodle'], action.options);
   case REDRAFT:
-  {
     const do_not_federate = !!action.status.get('local_only');
     let text = action.raw_text || unescapeHTML(expandMentions(action.status));
     if (do_not_federate) text = text.replace(/ ?👁\ufe0f?\u200b?$/, '');
@@ -631,7 +628,6 @@ export default function compose(state = initialState, action) {
         }));
       }
     });
-  }
   case COMPOSE_SET_STATUS:
     return state.withMutations(map => {
       map.set('id', action.status.get('id'));

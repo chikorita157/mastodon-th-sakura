@@ -57,14 +57,11 @@ import {
   translateStatus,
   undoStatusTranslation,
 } from '../../actions/statuses';
-
 import ColumnHeader from '../../components/column_header';
 import { textForScreenReader, defaultMediaVisibility } from '../../components/status';
 import StatusContainer from '../../containers/status_container';
-
 import { boostModal, deleteModal } from '../../initial_state';
 import { makeGetStatus, makeGetPictureInPicture } from '../../selectors';
-
 import Column from '../ui/components/column';
 import { attachFullscreenListener, detachFullscreenListener, isFullscreen } from '../ui/util/fullscreen';
 
