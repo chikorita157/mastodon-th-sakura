@@ -38,7 +38,7 @@ RUN --mount=type=cache,id=apt,target=/var/cache/apt,sharing=private \
         libpq-dev \
         libreadline8 \
         libssl-dev \
-        libyaml-0-2 \
+        libyaml-dev \
         python3 \
         shared-mime-info \
         zlib1g-dev
