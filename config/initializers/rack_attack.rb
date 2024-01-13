@@ -3,6 +3,8 @@
 require 'doorkeeper/grape/authorization_decorator'
 
 class Rack::Attack
+  TH_DEACTIVATE_THROTTLES = !!ENV['TH_DEACTIVATE_THROTTLES']
+
   class Request
     def authenticated_token
       return @authenticated_token if defined?(@authenticated_token)
@@ -76,7 +78,7 @@ class Rack::Attack
 
   throttle('throttle_unauthenticated_api', limit: 300, period: 5.minutes) do |req|
     req.throttleable_remote_ip if req.api_request? && req.unauthenticated?
-  end
+  end unless TH_DEACTIVATE_THROTTLES
 
   throttle('throttle_api_media', limit: 30, period: 30.minutes) do |req|
     req.authenticated_user_id if req.post? && req.path.match?(%r{\A/api/v\d+/media\z}i)
@@ -84,7 +86,7 @@ class Rack::Attack
 
   throttle('throttle_media_proxy', limit: 30, period: 10.minutes) do |req|
     req.throttleable_remote_ip if req.path.start_with?('/media_proxy')
-  end
+  end unless TH_DEACTIVATE_THROTTLES
 
   throttle('throttle_api_sign_up', limit: 5, period: 30.minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path == '/api/v1/accounts'
@@ -96,7 +98,7 @@ class Rack::Attack
 
   throttle('throttle_unauthenticated_paging', limit: 300, period: 15.minutes) do |req|
     req.throttleable_remote_ip if req.paging_request? && req.unauthenticated?
-  end
+  end unless TH_DEACTIVATE_THROTTLES
 
   API_DELETE_REBLOG_REGEX = %r{\A/api/v1/statuses/\d+/unreblog\z}
   API_DELETE_STATUS_REGEX = %r{\A/api/v1/statuses/\d+\z}
