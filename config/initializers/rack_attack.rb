@@ -4,6 +4,7 @@ require 'doorkeeper/grape/authorization_decorator'
 
 class Rack::Attack
   TH_DEACTIVATE_THROTTLES = !!ENV['TH_DEACTIVATE_THROTTLES']
+  TH_DEACTIVATE_DANGEROUS_THROTTLES = !!ENV['TH_DEACTIVATE_DANGEROUS_THROTTLES']
 
   class Request
     def authenticated_token
@@ -113,7 +114,7 @@ class Rack::Attack
 
   throttle('throttle_password_resets/ip', limit: 25, period: 5.minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path_matches?('/auth/password')
-  end
+  end unless TH_DEACTIVATE_DANGEROUS_THROTTLES
 
   throttle('throttle_password_resets/email', limit: 5, period: 30.minutes) do |req|
     req.params.dig('user', 'email').presence if req.post? && req.path_matches?('/auth/password')
@@ -133,7 +134,7 @@ class Rack::Attack
 
   throttle('throttle_login_attempts/ip', limit: 25, period: 5.minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path_matches?('/auth/sign_in')
-  end
+  end unless TH_DEACTIVATE_DANGEROUS_THROTTLES
 
   throttle('throttle_login_attempts/email', limit: 25, period: 1.hour) do |req|
     req.session[:attempt_user_id] || req.params.dig('user', 'email').presence if req.post? && req.path_matches?('/auth/sign_in')
