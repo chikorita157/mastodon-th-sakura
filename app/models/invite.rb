@@ -25,7 +25,7 @@ class Invite < ApplicationRecord
   TH_ACTIVE_INVITE_SLOT_QUOTA = ENV.fetch('TH_ACTIVE_INVITE_SLOT_QUOTA', 40).to_i
 
   belongs_to :user, inverse_of: :invites
-  has_many :users, inverse_of: :invite
+  has_many :users, inverse_of: :invite, dependent: nil
 
   scope :available, -> { where(expires_at: nil).or(where('expires_at >= ?', Time.now.utc)) }
 

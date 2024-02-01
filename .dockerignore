@@ -8,6 +8,7 @@
 
 # Order-independent
 *.sw*
+*.swp
 *~
 .DS_Store
 .bundle
@@ -26,7 +27,9 @@ elasticsearch
 log
 neo4j
 node_modules
+postgres
 postgres*
+postgres14
 public/assets
 public/packs
 public/packs-test
