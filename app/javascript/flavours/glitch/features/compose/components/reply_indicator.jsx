@@ -54,9 +54,6 @@ class ReplyIndicator extends ImmutablePureComponent {
           <div className='reply-indicator__cancel'>
             <IconButton title={intl.formatMessage(messages.cancel)} icon='times' iconComponent={CloseIcon} onClick={this.handleClick} inverted />
           </div>
-          <div className='quote-indicator__cancel'>
-            <Icon className='icon-button inverted' id='reply' />
-          </div>
 
           <a href={status.getIn(['account', 'url'])} onClick={this.handleAccountClick} className='reply-indicator__display-name' target='_blank' rel='noopener noreferrer'>
             <div className='reply-indicator__display-avatar'><Avatar account={status.get('account')} size={24} /></div>

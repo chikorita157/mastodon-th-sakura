@@ -372,17 +372,17 @@ class StatusContent extends PureComponent {
       let quoteStatusDisplayName = { __html: quoteStatusAccount.get('display_name_html') };
 
       quote = (
-        <div class="status__quote">
+        <div className='status__quote'>
           <blockquote>
             <bdi>
-              <span class="quote-display-name">
+              <span className='quote-display-name'>
                 <Icon
                   fixedWidth
                   icon='quote-right'
                   id='quote-right'
                   aria-hidden='true'
                   key='icon-quote-right' />
-                <strong class="display-name__html">
+                <strong className='display-name__html'>
                   <a onClick={this.handleAccountClick} href={quoteStatus.getIn(['account', 'url'])} dangerouslySetInnerHTML={quoteStatusDisplayName} />
                 </strong>
               </span>

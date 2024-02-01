@@ -1,15 +1,20 @@
 //  Package imports.
 import PropTypes from 'prop-types';
-import React from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+
 import { defineMessages, injectIntl } from 'react-intl';
+
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 
-//  Components.
-import AccountContainer from 'flavours/glitch/containers/account_container';
-import { Icon } from 'flavours/glitch/components/icon';
-import { IconButton } from 'flavours/glitch/components/icon_button';
+
+import CloseIcon from '@/material-icons/400-24px/close.svg?react';
 import AttachmentList from 'flavours/glitch/components/attachment_list';
+import { WithOptionalRouterPropTypes, withOptionalRouter } from 'flavours/glitch/utils/react_router';
+
+import { Avatar } from '../../../components/avatar';
+import { DisplayName } from '../../../components/display_name';
+import { Icon } from '../../../components/icon';
+import { IconButton } from '../../../components/icon_button';
 
 //  Messages.
 const messages = defineMessages({
@@ -19,19 +24,23 @@ const messages = defineMessages({
   },
 });
 
-
 class QuoteIndicator extends ImmutablePureComponent {
 
   static propTypes = {
     status: ImmutablePropTypes.map,
-    intl: PropTypes.object.isRequired,
     onCancel: PropTypes.func,
+    intl: PropTypes.object.isRequired,
+    ...WithOptionalRouterPropTypes,
   };
 
   handleClick = () => {
-    const { onCancel } = this.props;
-    if (onCancel) {
-      onCancel();
+    this.props.onCancel();
+  };
+
+  handleAccountClick = (e) => {
+    if (e.button === 0 && !(e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      this.props.history?.push(`/@${this.props.status.getIn(['account', 'acct'])}`);
     }
   }
 
@@ -43,40 +52,28 @@ class QuoteIndicator extends ImmutablePureComponent {
       return null;
     }
 
-    const account     = status.get('account');
-    const content     = status.get('content');
-    const attachments = status.get('media_attachments');
+    const content = { __html: status.get('contentHtml') };
 
     //  The result.
     return (
       <article className='quote-indicator'>
         <header className='quote-indicator__header'>
-          <IconButton
-            className='quote-indicator__cancel'
-            icon='times'
-            onClick={this.handleClick}
-            title={intl.formatMessage(messages.cancel)}
-            inverted
-          />
-          <Icon
-            className='quote-indicator__cancel icon-button inverted'
-            icon='quote-right'
-            id='quote-right' />
-          {account && (
-            <AccountContainer
-              id={account}
-              small
-            />
-          )}
+          <div className='quote-indicator__cancel'>
+            <IconButton title={intl.formatMessage(messages.cancel)} icon='times' iconComponent={CloseIcon} onClick={this.handleClick} inverted />
+          </div>
+
+          <a href={status.getIn(['account', 'url'])} onClick={this.handleAccountClick} className='quote-indicator__display-name' target='_blank' rel='noopener noreferrer'>
+            <div className='quote-indicator__display-avatar'><Avatar account={status.get('account')} size={24} /></div>
+            <DisplayName account={status.get('account')} inline />
+          </a>
         </header>
-        <div
-          className='quote-indicator__content icon-button translate'
-          dangerouslySetInnerHTML={{ __html: content || '' }}
-        />
-        {attachments.size > 0 && (
+
+        <div className='quote-indicator__content translate' dangerouslySetInnerHTML={content} />
+
+        {status.get('media_attachments').size > 0 && (
           <AttachmentList
             compact
-            media={attachments}
+            media={status.get('media_attachments')}
           />
         )}
       </article>
@@ -85,4 +82,4 @@ class QuoteIndicator extends ImmutablePureComponent {
 
 }
 
-export default injectIntl(QuoteIndicator)
+export default withOptionalRouter(injectIntl(QuoteIndicator));
