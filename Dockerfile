@@ -26,6 +26,8 @@ ARG MASTODON_VERSION_PRERELEASE=""
 # Append build metadata or fork information to version.rb [--build-arg MASTODON_VERSION_METADATA="something"]
 ARG MASTODON_VERSION_METADATA=""
 
+ARG SOURCE_TAG=""
+
 # Allow Ruby on Rails to serve static files
 # See: https://docs.joinmastodon.org/admin/config/#rails_serve_static_files
 ARG RAILS_SERVE_STATIC_FILES="true"

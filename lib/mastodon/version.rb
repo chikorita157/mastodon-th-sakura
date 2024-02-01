@@ -44,33 +44,41 @@ module Mastodon
     end
 
     def repository
-      ENV.fetch('GIT_REPOSITORY', false) || ENV.fetch('GITHUB_REPOSITORY', false) || 'treehouse/mastodon'
+      @repository ||= ENV.fetch('GIT_REPOSITORY', false) || ENV.fetch('GITHUB_REPOSITORY', false) || 'treehouse/mastodon'
     end
 
     def source_base_url
-      base = ENV['GITHUB_REPOSITORY'] ? 'https://github.com' : 'https://gitea.treehouse.systems'
-      ENV.fetch('SOURCE_BASE_URL', "#{base}/#{repository}")
+      @source_base_url ||=
+        begin
+          base = ENV['GITHUB_REPOSITORY'] ? 'https://github.com' : 'https://gitea.treehouse.systems'
+          ENV.fetch('SOURCE_BASE_URL', "#{base}/#{repository}")
+        end
     end
 
     # specify git tag or commit hash here
     def source_tag
-      tag = ENV.fetch('SOURCE_TAG', nil)
-      return if tag.nil? || tag.empty?
-      tag
+      @source_tag ||=
+        begin
+          tag = ENV.fetch('SOURCE_TAG', nil)
+          return if tag.nil? || tag.empty?
+          tag
+        end
     end
 
     def source_url
-      tag = source_tag
-      if tag && source_base_url =~ /gitea/
-        suffix = if !tag[/\H/]
-                   "commit/#{tag}"
-                 else
-                   "branch/#{tag}"
-                 end
-        "#{source_base_url}/#{suffix}"
-      else
-        source_base_url
-      end
+      @source_url ||=
+        begin
+          if source_tag && source_base_url =~ /gitea/
+            suffix = if !tag[/\H/]
+                       "commit/#{source_tag}"
+                     else
+                       "branch/#{source_tag}"
+                     end
+            "#{source_base_url}/#{suffix}"
+          else
+            source_base_url
+          end
+        end
     end
 
     def user_agent

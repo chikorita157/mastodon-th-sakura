@@ -1,6 +1,7 @@
 variables:
   environment: &docker-environment
-    NAME: gitea.treehouse.systems/treehouse/mastodon
+    SERVER_IMAGE: gitea.treehouse.systems/treehouse/mastodon
+    STREAMING_IMAGE: gitea.treehouse.systems/treehouse/mastodon-streaming
     DATE_COMMAND: export COMMIT_DATE=$(date -u -Idate -d @$(git show -s --format=%ct))
   docker-step: &docker-step
     image: docker:rc-git
@@ -17,43 +18,18 @@ clone:
       depth: 10
 
 pipeline:
-  # build-base:
-  #   <<: *docker-step
-  #   commands:
-  #     - docker version
-  #     - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build-base -t $NAME:build-base
-
-  # build:
-  #   <<: *docker-step
-  #   commands:
-  #     - docker version
-  #     - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target build -t $NAME:build
-
-  # output-base:
-  #   <<: *docker-step
-  #   commands:
-  #     - docker version
-  #     - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . --target output-base -t $NAME:build
-
-  # the world is not yet ready for this step
-  # test:
-  #   <<: *docker-step
-  #   commands:
-  #     - docker run --rm -e RAILS_ENV=test -e NODE_ENV=development $NAME:build-base sh -c 'bundle config set --local without development && bundle install && rake spec'
-
   output:
     <<: *docker-step
     commands:
       - eval $DATE_COMMAND
       - export TAG=$${COMMIT_DATE}.$CI_COMMIT_SHA && echo $${TAG}
-      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $NAME:latest
-      - docker image build -f streaming/Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $NAME-streaming:latest
-      - docker tag $NAME:latest $NAME:$TAG
-      - docker tag $NAME-streaming:latest $NAME-streaming:$TAG
-      # idk what's actually persisted between steps
-      # /shrug this works, so,???
-      - echo $${TAG} > tags.txt
-      - echo latest >> tags.txt
+      - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $SERVER_IMAGE:$${TAG}
+      - docker image build -f streaming/Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $STREAMING_IMAGE:$${TAG}
+      - docker tag $SERVER_IMAGE:$${TAG} $SERVER_IMAGE:latest
+      - docker tag $STREAMING_IMAGE:$${TAG} $SERVER_IMAGE:latest
+      - echo -n > tags.txt
+      - echo $${TAG} | tee -a tags.txt
+      - echo latest | tee -a tags.txt
 
   # maybe we can use tags someday,,,
   # tag-tag:
@@ -61,7 +37,7 @@ pipeline:
   #   volumes:
   #     - /var/run/docker.sock:/var/run/docker.sock
   #   commands:
-  #     - docker tag $NAME:latest $NAME:$CI_COMMIT_TAG
+  #     - docker tag $SERVER_IMAGE:latest $SERVER_IMAGE:$CI_COMMIT_TAG
   #   when:
   #     event: tag
 
@@ -69,10 +45,10 @@ pipeline:
     <<: *docker-step
     commands:
       - echo $REGISTRY_SECRET | docker login -u $REGISTRY_USER --password-stdin gitea.treehouse.systems
-      - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME:%
-      - cat tags.txt | xargs -n 1 -I% docker image push $NAME:%
-      - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME-streaming:%
-      - cat tags.txt | xargs -n 1 -I% docker image push $NAME-streaming:%
+      - cat tags.txt | xargs -n 1 -I% echo docker image push $SERVER_IMAGE:%
+      - cat tags.txt | xargs -n 1 -I% docker image push $SERVER_IMAGE:%
+      - cat tags.txt | xargs -n 1 -I% echo docker image push $STREAMING_IMAGE:%
+      - cat tags.txt | xargs -n 1 -I% docker image push $STREAMING_IMAGE:%
     when:
       event: [push, tag]
       branch: main
