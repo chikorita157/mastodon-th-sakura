@@ -47,7 +47,9 @@ pipeline:
       - eval $DATE_COMMAND
       - export TAG=$${COMMIT_DATE}.$CI_COMMIT_SHA && echo $${TAG}
       - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $NAME:latest
+      - docker image build -f streaming/Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $NAME-streaming:latest
       - docker tag $NAME:latest $NAME:$TAG
+      - docker tag $NAME-streaming:latest $NAME-streaming:$TAG
       # idk what's actually persisted between steps
       # /shrug this works, so,???
       - echo $${TAG} > tags.txt
@@ -69,6 +71,8 @@ pipeline:
       - echo $REGISTRY_SECRET | docker login -u $REGISTRY_USER --password-stdin gitea.treehouse.systems
       - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME:%
       - cat tags.txt | xargs -n 1 -I% docker image push $NAME:%
+      - cat tags.txt | xargs -n 1 -I% echo docker image push $NAME-streaming:%
+      - cat tags.txt | xargs -n 1 -I% docker image push $NAME-streaming:%
     when:
       event: [push, tag]
       branch: main
