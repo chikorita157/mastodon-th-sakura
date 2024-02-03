@@ -301,12 +301,16 @@ export function submitCompose(routerHistory) {
         insertIfOnline('direct');
       }
 
-      dispatch(showAlert({
-        message: statusId === null ? messages.published : messages.saved,
-        action: messages.open,
-        dismissAfter: 10000,
-        onClick: () => routerHistory.push(`/@${response.data.account.username}/${response.data.id}`),
-      }));
+      // Upstream shows a "post published" message every time you post now.  This is highly annoying.
+      // Instead, only display a message if a draft is saved.
+      if (statusId !== null) {
+        dispatch(showAlert({
+          message: messages.saved,
+          action: messages.open,
+          dismissAfter: 10000,
+          onClick: () => routerHistory.push(`/@${response.data.account.username}/${response.data.id}`),
+        }));
+      }
     }).catch(function (error) {
       dispatch(submitComposeFail(error));
     });
