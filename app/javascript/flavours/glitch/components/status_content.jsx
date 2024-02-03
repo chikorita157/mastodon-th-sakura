@@ -14,6 +14,7 @@ import InsertChartIcon from '@/material-icons/400-24px/insert_chart.svg?react';
 import LinkIcon from '@/material-icons/400-24px/link.svg?react';
 import MovieIcon from '@/material-icons/400-24px/movie.svg?react';
 import MusicNoteIcon from '@/material-icons/400-24px/music_note.svg?react';
+import QuoteIcon from '@/material-icons/400-24px/format_quote-fill.svg?react';
 import { Icon } from 'flavours/glitch/components/icon';
 import { autoPlayGif, languages as preloadedLanguages } from 'flavours/glitch/initial_state';
 import { decode as decodeIDNA } from 'flavours/glitch/utils/idna';
@@ -381,7 +382,8 @@ class StatusContent extends PureComponent {
                   icon='quote-right'
                   id='quote-right'
                   aria-hidden='true'
-                  key='icon-quote-right' />
+                  key='icon-quote-right'
+                  iconComponent={QuoteIcon} />
                 <strong className='display-name__html'>
                   <a onClick={this.handleAccountClick} href={quoteStatus.getIn(['account', 'url'])} dangerouslySetInnerHTML={quoteStatusDisplayName} />
                 </strong>

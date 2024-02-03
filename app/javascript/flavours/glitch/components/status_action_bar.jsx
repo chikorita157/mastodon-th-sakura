@@ -10,7 +10,7 @@ import ImmutablePureComponent from 'react-immutable-pure-component';
 
 import BookmarkIcon from '@/material-icons/400-24px/bookmark-fill.svg?react';
 import BookmarkBorderIcon from '@/material-icons/400-24px/bookmark.svg?react';
-import FormatQuoteIcon from '@/material-icons/400-24px/format_quote.svg?react';
+import FormatQuoteIcon from '@/material-icons/400-24px/format_quote-fill.svg?react';
 import MoreHorizIcon from '@/material-icons/400-24px/more_horiz.svg?react';
 import RepeatIcon from '@/material-icons/400-24px/repeat.svg?react';
 import ReplyIcon from '@/material-icons/400-24px/reply.svg?react';
