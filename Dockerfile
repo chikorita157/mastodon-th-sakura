@@ -210,9 +210,7 @@ RUN \
 # Use Ruby on Rails to create Mastodon assets
   OTP_SECRET=precompile_placeholder SECRET_KEY_BASE=precompile_placeholder bundle exec rails assets:precompile; \
 # Cleanup temporary files
-  rm -fr /opt/mastodon/tmp; \
-# TODO(kouhai): fork emoji-mart instead of patching
-  mv ./emoji_data/all.json ./node_modules/emoji-mart/data/all.json
+  rm -fr /opt/mastodon/tmp
 
 # Prep final Mastodon Ruby layer
 FROM ruby as mastodon
