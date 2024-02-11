@@ -45,8 +45,6 @@ const notFoundFn = () => (
       set='twitter'
       size={32}
       sheetSize={32}
-      sheetColumns={60}
-      sheetRows={60}
       backgroundImageFn={backgroundImageFn}
     />
 
@@ -105,12 +103,12 @@ class ModifierPickerMenu extends PureComponent {
 
     return (
       <div className='emoji-picker-dropdown__modifiers__menu' style={{ display: active ? 'block' : 'none' }} ref={this.setRef}>
-        <button type='button' onClick={this.handleClick} data-index={1}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={1} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
-        <button type='button' onClick={this.handleClick} data-index={2}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={2} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
-        <button type='button' onClick={this.handleClick} data-index={3}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={3} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
-        <button type='button' onClick={this.handleClick} data-index={4}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={4} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
-        <button type='button' onClick={this.handleClick} data-index={5}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={5} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
-        <button type='button' onClick={this.handleClick} data-index={6}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={6} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
+        <button type='button' onClick={this.handleClick} data-index={1}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={1} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
+        <button type='button' onClick={this.handleClick} data-index={2}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={2} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
+        <button type='button' onClick={this.handleClick} data-index={3}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={3} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
+        <button type='button' onClick={this.handleClick} data-index={4}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={4} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
+        <button type='button' onClick={this.handleClick} data-index={5}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={5} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
+        <button type='button' onClick={this.handleClick} data-index={6}><Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={6} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} /></button>
       </div>
     );
   }
@@ -145,7 +143,7 @@ class ModifierPicker extends PureComponent {
 
     return (
       <div className='emoji-picker-dropdown__modifiers'>
-        <Emoji emoji='fist' set='twitter' size={22} sheetSize={32} sheetColumns={60} sheetRows={60} skin={modifier} onClick={this.handleClick} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} />
+        <Emoji emoji='fist' set='twitter' size={22} sheetSize={32} skin={modifier} onClick={this.handleClick} backgroundImageFn={backgroundImageFn} native={useSystemEmojiFont} />
         <ModifierPickerMenu active={active} onSelect={this.handleSelect} onClose={this.props.onClose} />
       </div>
     );
@@ -282,8 +280,6 @@ class EmojiPickerMenuImpl extends PureComponent {
           perLine={8}
           emojiSize={22}
           sheetSize={32}
-          sheetColumns={60}
-          sheetRows={60}
           custom={buildCustomEmojis(custom_emojis)}
           color=''
           emoji=''
