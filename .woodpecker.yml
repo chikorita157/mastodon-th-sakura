@@ -26,7 +26,7 @@ pipeline:
       - docker image build -f Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $SERVER_IMAGE:$${TAG}
       - docker image build -f streaming/Dockerfile --build-arg SOURCE_TAG=$CI_COMMIT_SHA . -t $STREAMING_IMAGE:$${TAG}
       - docker tag $SERVER_IMAGE:$${TAG} $SERVER_IMAGE:latest
-      - docker tag $STREAMING_IMAGE:$${TAG} $SERVER_IMAGE:latest
+      - docker tag $STREAMING_IMAGE:$${TAG} $STREAMING_IMAGE:latest
       - echo -n > tags.txt
       - echo $${TAG} | tee -a tags.txt
       - echo latest | tee -a tags.txt
