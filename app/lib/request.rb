@@ -261,10 +261,19 @@ class Request
         begin
           addresses = [IPAddr.new(host)]
         rescue IPAddr::InvalidAddressError
-          Resolv::DNS.open do |dns|
-            dns.timeouts = 5
-            addresses = dns.getaddresses(host)
-            addresses = addresses.filter { |addr| addr.is_a?(Resolv::IPv6) }.take(2) + addresses.filter { |addr| !addr.is_a?(Resolv::IPv6) }.take(2)
+          begin
+            Resolv::DNS.open do |dns|
+              dns.timeouts = 5
+              addresses = dns.getaddresses(host)
+              addresses = addresses.filter { |addr| addr.is_a?(Resolv::IPv6) }.take(2) + addresses.filter { |addr| !addr.is_a?(Resolv::IPv6) }.take(2)
+            end
+          rescue ResolvError
+            # try /etc/hosts file
+            # https://github.com/mastodon/mastodon/issues/9436
+            Resolv::Hosts.open do |dns|
+              addresses = dns.getaddresses(host)
+              addresses = addresses.filter { |addr| addr.is_a?(Resolv::IPv6) }.take(2) + addresses.filter { |addr| !addr.is_a?(Resolv::IPv6) }.take(2)
+            end
           end
         end
 
