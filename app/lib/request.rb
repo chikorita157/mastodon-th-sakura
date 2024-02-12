@@ -268,12 +268,22 @@ class Request
               addresses = addresses.filter { |addr| addr.is_a?(Resolv::IPv6) }.take(2) + addresses.filter { |addr| !addr.is_a?(Resolv::IPv6) }.take(2)
             end
           rescue ResolvError
+          end
+
+          if addresses.empty?
             # try /etc/hosts file
             # https://github.com/mastodon/mastodon/issues/9436
-            Resolv::Hosts.open do |dns|
-              addresses = dns.getaddresses(host)
-              addresses = addresses.filter { |addr| addr.is_a?(Resolv::IPv6) }.take(2) + addresses.filter { |addr| !addr.is_a?(Resolv::IPv6) }.take(2)
+            Resolv::Hosts.new.each_address(host) do |address|
+              case address
+              when Resolv::IPv4::Regex
+                addresses << Resolv::IPv4.create(address)
+              when Resolv::IPv6::Regex
+                addresses << Resolv::IPv6.create(address)
+              else
+                raise ResolvError.new("cannot interpret as address: #{address}")
+              end
             end
+            addresses = addresses.filter { |addr| addr.is_a?(Resolv::IPv6) }.take(2) + addresses.filter { |addr| !addr.is_a?(Resolv::IPv6) }.take(2)
           end
         end
 
