@@ -56,7 +56,7 @@ const logger = pino({
       'req.headers.cookie',
       'req.query.access_token'
     ]
-  }
+  },
 });
 
 const httpLogger = pinoHttp({

@@ -25,21 +25,14 @@ const dotenvFile = environment === 'production' ? '.env.production' : '.env.deve
 const dotenvFileLocal = `${dotenvFile}.local`
 
 // Replicate dotenv-rails's behavior
-dotenv.config({
-  path: '.env',
-});
-dotenv.config({
-  path: path.resolve(__dirname, path.join('..', dotenvFile))
-});
-dotenv.config({
-  path: '.env.local',
-});
-dotenv.config({
-  path: environment === 'production' ? '.env.production.local' : '.env.development.local',
-});
-dotenv.config({
-  path: path.resolve(__dirname, path.join('..', dotenvFileLocal))
-});
+const projectDir = path.resolve(__dirname, '..')
+const dotenvFiles = ['.env', dotenvFile, '.env.local', dotenvFileLocal]
+  .map(s => path.join(projectDir, s));
+dotenvFiles.forEach(path => dotenv.config({path}));
+
+if (process.env.REDIS_URL && process.env.PWD) {
+  process.env.REDIS_URL = process.env.REDIS_URL.replace(/\$PWD\b|$\{PWD\}/, projectDir);
+}
 
 initializeLogLevel(process.env, environment);
 
@@ -81,7 +74,7 @@ const createRedisClient = async (config) => {
     client = new Redis(redisUrl, redisParams);;
   }
   // @ts-ignore
-  client.on('error', (err) => log.error('Redis Client Error!', err));
+  client.on('error', (err) => logger.error(err, 'Redis Client Error!'));
 
   return client;
 };
@@ -205,10 +198,14 @@ const redisConfigFromEnv = (env) => {
     redisParams.path = env.REDIS_URL.slice(7);
   }
 
+  const redisUrlParams = env.REDIS_URL ? {
+    redisUrl: env.REDIS_URL,
+  } : {};
+
   return {
     redisParams,
     redisPrefix,
-    redisUrl: env.REDIS_URL,
+    ...redisUrlParams,
   };
 };
 
