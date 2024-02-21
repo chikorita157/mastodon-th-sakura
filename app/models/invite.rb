@@ -56,7 +56,7 @@ class Invite < ApplicationRecord
   end
 
   def created_by_moderator?
-    self.user.moderator
+    self.user.can?(:manage_invites)
   end
 
   def th_use_invite_quota?

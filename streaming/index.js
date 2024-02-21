@@ -30,6 +30,14 @@ const dotenvFiles = ['.env', dotenvFile, '.env.local', dotenvFileLocal]
   .map(s => path.join(projectDir, s));
 dotenvFiles.forEach(path => dotenv.config({path}));
 
+const subEnv = (s) => s.replaceAll(/\$\w+|\$\{\w+\}/g, (match) => {
+  const name = match.startsWith('${') ? match.slice(2, -1) : match.slice(1);
+  if (name === 'PWD') {
+    return projectDir;
+  }
+  return process.env[name];
+});
+
 if (process.env.REDIS_URL && process.env.PWD) {
   process.env.REDIS_URL = process.env.REDIS_URL.replace(/\$PWD\b|$\{PWD\}/, projectDir);
 }
@@ -61,7 +69,7 @@ const createRedisClient = async (config) => {
   if (!redisUrl) {
     // @ts-ignore
     client = new Redis(redisParams);
-  } else if (parsed.host === null && parsed.path[0] === '.') {
+  } else if (parsed.host === null && parsed?.path?.[0] === '.') {
     redisParams.path = parsed.path;
     // @ts-ignore
     client = new Redis(redisParams);
@@ -116,10 +124,7 @@ const parseJSON = (json, req) => {
  */
 const pgConfigFromEnv = (env) => {
   if (env.DB_HOST) {
-    env.DB_HOST = env.DB_HOST.replaceAll(/\$\w+|\$\{\w+\}/g, (match) => {
-      const name = match.startsWith('${') ? match.slice(2, -1) : match.slice(1);
-      return env[name];
-    });
+    env.DB_HOST = subEnv(env.DB_HOST);
   }
   const pgConfigs = {
     development: {
@@ -1113,10 +1118,12 @@ const startServer = async () => {
   api.use(errorMiddleware);
 
   api.get('/api/v1/streaming/*', (req, res) => {
+    console.log(req)
     // @ts-ignore
     channelNameToIds(req, channelNameFromPath(req), req.query).then(({ channelIds, options }) => {
       const onSend = streamToHttp(req, res);
       const onEnd = streamHttpEnd(req, subscriptionHeartbeat(channelIds));
+      console.log(1)
 
       // @ts-ignore
       streamFrom(channelIds, req, req.log, onSend, onEnd, 'eventsource', options.needsFiltering, options.allowLocalOnly);

@@ -40,7 +40,7 @@ RSpec.describe Invite do
     let(:max_uses) { 25 }
     let(:expires_in) { 1.week.in_seconds }
     let(:regular_user) { Fabricate(:user) }
-    let(:moderator_user) { Fabricate(:user, moderator: true) }
+    let(:moderator_user) { Fabricate(:moderator_user) }
     let(:user) { regular_user }
     let(:created_at) { Time.at(0) }
     let(:expires_at) { Time.at(0) + expires_in }
